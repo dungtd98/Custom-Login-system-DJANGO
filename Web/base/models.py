@@ -108,6 +108,6 @@ class CustomUserModel(PermissionsMixin, AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
     
-    def __str__(self) -> str:
+    def __str__(self):
         return self.userFullname
 

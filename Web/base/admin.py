@@ -11,32 +11,43 @@ from simple_history.admin import SimpleHistoryAdmin
 
 UserModel = get_user_model()
 
-admin.site.unregister([ Group,])
-admin.site.register(UserModel)
+
+
 
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm
+
+    list_display = ('userID','userFullname','is_active')
+    list_filter = ('userID','userFullname','is_active')
+
     fieldsets = (
         ('Account',{'fields':('userID','password')}),
         ('Personal Infor',{'fields': ('userFullname','userRole')}),
-        ('Onduty Status',{'fields':('workingStatus')}),
+        ('Onduty Status',{'fields':('workingStatus',)}),
         ('Permissions',{'fields':(
             "is_active",
             "is_staff",
-            "is_superuser"
+            "is_superuser",
         )})
     )
 
     add_fieldsets = (
         ('Account login infor',{'fields':(
             "userID",
-            'userFullname',
             'password1',
             'password2'
+        )}),
+        ('Personal Infor',{'fields':(
+            'userFullname', 
+            'userRole', 
+            'workingStatus'
         )})
     )
     search_fields =['userID', 'userFullname']
-    ordering = ['id','userID','userFullname']
-    
+    ordering = ['userID','userFullname']
+
+
+admin.site.register(UserModel,UserAdmin) 
+admin.site.unregister(Group)
