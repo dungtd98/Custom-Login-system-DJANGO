@@ -17,16 +17,17 @@ class CustomUserManager(BaseUserManager):
     
     def create_user(self, userID, password=None, **kwargs):
         kwargs.setdefault('is_staff',False)
-        kwargs.setdefault('is_admin', False)
+        kwargs.setdefault('is_superuser', False)
         return self._create_user(userID, password, **kwargs)
 
     def create_superuser(self, userID, password=None, **kwargs):
         kwargs.setdefault('is_staff', True)
-        kwargs.setdefault('is_admin', True)
+        kwargs.setdefault('is_superuser', True)
         if kwargs.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
         if kwargs.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
+        
         return self._create_user(userID, password, **kwargs)
 
 class CustomUserModel(PermissionsMixin, AbstractBaseUser):
@@ -34,11 +35,11 @@ class CustomUserModel(PermissionsMixin, AbstractBaseUser):
         verbose_name="Mã nhân viên: ",
         max_length=20,
         unique=True,
-        help_text=_(
+        help_text=(
             "Required, 20 characters or fewer"
         ),
         error_messages={
-            "unique":_("userID already existed.")
+            "unique":("userID already existed.")
         }
     )
 
@@ -52,7 +53,7 @@ class CustomUserModel(PermissionsMixin, AbstractBaseUser):
         ("EMPLOYEE", 'Nhân viên'),
         ("MANAGER",'Quản lí')
     ]
-    user_role = models.CharField(
+    userRole = models.CharField(
         verbose_name="Chức vụ",
         max_length=30,
         choices=ROLES,
@@ -60,7 +61,53 @@ class CustomUserModel(PermissionsMixin, AbstractBaseUser):
     )
 
     is_staff = models.BooleanField(
-        _("staff_status"),
+        ("staff_status"),
         default=False,
-        help_text=_("")
+        help_text=("Designate whether this user can log into admin site "),
         )
+    
+    is_active = models.BooleanField(
+        ("active"),
+        default= True,
+        help_text=(
+            "Designate whether this user should be treated as active."
+            "Unselected this instead of deleted account"
+        )
+    )
+
+    is_superuser = models.BooleanField(
+        ("superuser status"),
+        default=False,
+        help_text=(
+            "Designates that this user has all permissions without "
+            "explicitly assigning them."
+        ),
+    )
+
+    ABSENT_STATUS = [
+        ("ONDUTY",'bình thường'),
+        ("ANUAL_LEAVE", 'phép năm'),
+        ("NOREASON_LEAVE",'nghỉ tự do'),
+        ("SICK_LEAVE","phép bệnh"),
+        ("PRIVATE_LEAVE","Phép riêng")
+    ]
+    workingStatus = models.CharField(
+        verbose_name="Điểm danh",
+        max_length=30,
+        choices=ABSENT_STATUS,
+        default="ONDUTY"
+    )
+
+    objects = CustomUserManager()
+    USERNAME_FIELD = "userID"
+    REQUIRED_FIELDS = ["userFullname"]
+    
+    def has_perm(self, perm, obj=None):
+        return True
+    
+    def has_module_perms(self, app_label):
+        return True
+    
+    def __str__(self) -> str:
+        return self.userFullname
+
