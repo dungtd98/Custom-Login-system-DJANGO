@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static '/base/css/login.css' %}">
+    </head>
+    
+    <body>
+        <h2>Login</h2>
+        <form method='post' action="">
+            {% csrf_token %}
+            <p>
+                <label for="id_username">Mã nhân viên</label>
+                <input type="text" name="username" required id="id_username" maxlength="20">
+            </p>
+            <p>
+                <label for="id_password">Mật khẩu</label>
+                <input type="password" name="password" required id="id_password">
+            </p>
+            <p>
+                <span><a href="http://">Đăng kí</a></span>
+                <span><a href="http://">Quên mật khẩu?</a></span>
+            </p>
+            <input type="submit" name="" id="" value="Login">
+        </form>
+    </body>
+    
+</html>
+
+

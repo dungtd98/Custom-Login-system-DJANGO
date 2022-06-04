@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from .forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import SetPasswordForm
 
 
 from django.contrib.auth import get_user_model
@@ -11,13 +12,10 @@ from simple_history.admin import SimpleHistoryAdmin
 
 UserModel = get_user_model()
 
-
-
-
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-    change_password_form = AdminPasswordChangeForm
+    change_password_form = SetPasswordForm
 
     list_display = ('userID','userFullname','is_active')
     list_filter = ('userID','userFullname','is_active')
